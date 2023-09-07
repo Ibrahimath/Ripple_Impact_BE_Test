@@ -6,19 +6,20 @@ import jwt from "jsonwebtoken";
 
 export const resolvers = {
   Query: {
-    user: async (_, { id }) => {
-      // Implement a resolver to fetch a user by ID from the database
-      // You may use Mongoose or your preferred database library here
+    user: async (_, { email}) => {
+        const findUser = await User.findOne({ email: email });
+        
+        return findUser
     },
   },
   Mutation: {
     signup: async (_, { input }) => {
+        try{
       const validateData = validateRegister(input);
       if (validateData.error) {
         throw new Error(validateData.error.details[0].message);
       }
       const { email, username, password } = input;
-      //check if the user already exists
       const findUser = await User.findOne({ email: email });
       if (findUser) {
         throw new Error("User already exists");
@@ -36,6 +37,9 @@ export const resolvers = {
       delete user.passwordSalt;
       delete user._id;
       return user;
+    }catch (err) {
+        console.log(err.message);
+    }
     },
     login: async (_, { input }) => {
       const { email, password } = input;
