@@ -1,8 +1,7 @@
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer, gql } from "apollo-server-express";
 
 export const typeDefs = gql`
   type User {
-    id: ID!
     username: String!
     email: String!
   }
@@ -27,7 +26,7 @@ export const typeDefs = gql`
     user(id: ID!): User
   }
   type Mutation {
-    signup(input: SignupInput!): AuthPayload
+    signup(input: SignupInput!): User
     login(input: LoginInput!): AuthPayload
   }
 `;
