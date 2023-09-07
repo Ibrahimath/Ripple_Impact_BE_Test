@@ -6,40 +6,40 @@ import jwt from "jsonwebtoken";
 
 export const resolvers = {
   Query: {
-    user: async (_, { email}) => {
-        const findUser = await User.findOne({ email: email });
-        
-        return findUser
+    user: async (_, { email }) => {
+      const findUser = await User.findOne({ email: email });
+
+      return findUser;
     },
   },
   Mutation: {
     signup: async (_, { input }) => {
-        try{
-      const validateData = validateRegister(input);
-      if (validateData.error) {
-        throw new Error(validateData.error.details[0].message);
-      }
-      const { email, username, password } = input;
-      const findUser = await User.findOne({ email: email });
-      if (findUser) {
-        throw new Error("User already exists");
-      }
-      const { hash, salt } = await hashPassword(password);
-      await User.create({
-        email: email,
-        username: username,
-        passwordHash: hash,
-        passwordSalt: salt,
-      });
+      try {
+        const validateData = validateRegister(input);
+        if (validateData.error) {
+          throw new Error(validateData.error.details[0].message);
+        }
+        const { email, username, password } = input;
+        const findUser = await User.findOne({ email: email });
+        if (findUser) {
+          throw new Error("User already exists");
+        }
+        const { hash, salt } = await hashPassword(password);
+        await User.create({
+          email: email,
+          username: username,
+          passwordHash: hash,
+          passwordSalt: salt,
+        });
 
-      const user = await User.findOne({ email: email });
-      delete user.passwordHash;
-      delete user.passwordSalt;
-      delete user._id;
-      return user;
-    }catch (err) {
+        const user = await User.findOne({ email: email });
+        delete user.passwordHash;
+        delete user.passwordSalt;
+        delete user._id;
+        return user;
+      } catch (err) {
         console.log(err.message);
-    }
+      }
     },
     login: async (_, { input }) => {
       const { email, password } = input;
@@ -74,7 +74,7 @@ export const resolvers = {
           token: token,
           user: user,
         };
-        
+
         return AuthPayload;
       } catch (err) {
         console.log(err.message);
