@@ -13,6 +13,7 @@ export const resolvers = {
   },
   Mutation: {
     signup: async (_, { input }) => {
+      try{
       const validateData = validateRegister(input);
       if (validateData.error) {
         throw new Error(validateData.error.details[0].message);
@@ -36,6 +37,9 @@ export const resolvers = {
       delete user.passwordSalt;
       delete user._id;
       return user;
+    }catch (err) {
+      console.log(err.message);
+    }
     },
     login: async (_, { input }) => {
       const { email, password } = input;
